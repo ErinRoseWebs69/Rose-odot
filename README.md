@@ -7,3 +7,6 @@ Yes, but only when stables releases of the newest Godot versions are released.
 
 ## Is *Rose-odot* open to changes from other people?
 ***Yes***. Any ways to optimize and improve this system is whole-heartedly welcomed, as I (Rosemary) may not be fully aware of other functions or systems that could be better than what I'm currently doing.
+
+### Is *Rose-odot* a play on words of the food?
+Accidentally...
