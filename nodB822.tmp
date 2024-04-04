@@ -1,0 +1,42 @@
+[gd_scene load_steps=8 format=3 uid="uid://47qbytsoiag6"]
+
+[ext_resource type="Script" path="res://mapGenRedo1.gd" id="1_dmg23"]
+[ext_resource type="Material" uid="uid://b844nygcak4nn" path="res://materials/mssing_material.tres" id="2_0nvh5"]
+[ext_resource type="PackedScene" uid="uid://h5gkm3sk8iid" path="res://quake_character.tscn" id="2_cs278"]
+[ext_resource type="Material" uid="uid://cnuqt4kcxvse4" path="res://materials/engine/missingMaterial.tres" id="4_7fhse"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_6r5kx"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_m3y6m"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_at80h"]
+material = ExtResource("4_7fhse")
+size = Vector2(40, 40)
+
+[node name="Node3D" type="Node3D"]
+script = ExtResource("1_dmg23")
+map_file = "room_test3.rdmf"
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.984808, -0.167731, 0.0449434, 0, 0.258819, 0.965926, -0.173648, -0.951251, 0.254887, 0, 0, 4)
+shadow_enabled = true
+
+[node name="RigidBody3D" type="RigidBody3D" parent="."]
+transform = Transform3D(0.707107, 0.612372, 0.353553, -0.707107, 0.612372, 0.353553, 0, -0.5, 0.866025, 0, 1, 2)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D"]
+material_override = ExtResource("2_0nvh5")
+mesh = SubResource("BoxMesh_6r5kx")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
+shape = SubResource("BoxShape3D_m3y6m")
+
+[node name="world" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+
+[node name="player" parent="." instance=ExtResource("2_cs278")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 1, -4)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 9)
+mesh = SubResource("PlaneMesh_at80h")

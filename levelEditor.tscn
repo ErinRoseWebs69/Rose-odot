@@ -1,0 +1,105 @@
+[gd_scene load_steps=5 format=3 uid="uid://b506rclbwvms7"]
+
+[ext_resource type="Script" path="res://scripts/levelEditor.gd" id="1_0qbaf"]
+[ext_resource type="Script" path="res://scripts/mapMakerCam.gd" id="1_naxgj"]
+[ext_resource type="Texture2D" uid="uid://be5nwe1gww3qr" path="res://materials/bricks/brick_red_32x.png" id="2_wqs3v"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_iuaqo"]
+
+[node name="Node3D" type="Node3D"]
+script = ExtResource("1_0qbaf")
+
+[node name="FreeLookCamera" type="Camera3D" parent="."]
+script = ExtResource("1_naxgj")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="FreeLookCamera"]
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_top = 23.0
+offset_right = 50.0
+grow_vertical = 2
+
+[node name="PlaneTool" type="TextureButton" parent="FreeLookCamera/VBoxContainer"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+tooltip_text = "Plane Tool"
+texture_normal = ExtResource("2_wqs3v")
+stretch_mode = 5
+
+[node name="FaceEditTool" type="TextureButton" parent="FreeLookCamera/VBoxContainer"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+tooltip_text = "Face Edit Tool"
+texture_normal = ExtResource("2_wqs3v")
+stretch_mode = 5
+
+[node name="DecalTool" type="TextureButton" parent="FreeLookCamera/VBoxContainer"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+tooltip_text = "Decal Tool"
+texture_normal = ExtResource("2_wqs3v")
+stretch_mode = 5
+
+[node name="EntityTool" type="TextureButton" parent="FreeLookCamera/VBoxContainer"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+tooltip_text = "Entity Tool"
+texture_normal = ExtResource("2_wqs3v")
+stretch_mode = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="FreeLookCamera"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 20.0
+grow_horizontal = 2
+
+[node name="Label" type="Label" parent="FreeLookCamera/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "text"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="FreeLookCamera"]
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -279.0
+grow_horizontal = 0
+grow_vertical = 2
+size_flags_vertical = 3
+
+[node name="Panel" type="Panel" parent="FreeLookCamera/VBoxContainer2"]
+custom_minimum_size = Vector2(0, 240)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Panel2" type="Panel" parent="FreeLookCamera/VBoxContainer2"]
+custom_minimum_size = Vector2(0, 240)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Panel3" type="Panel" parent="FreeLookCamera/VBoxContainer2"]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.25
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
+mesh = SubResource("BoxMesh_iuaqo")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[connection signal="pressed" from="FreeLookCamera/VBoxContainer/PlaneTool" to="." method="_on_plane_tool_pressed"]
+[connection signal="pressed" from="FreeLookCamera/VBoxContainer/FaceEditTool" to="." method="_on_face_edit_tool_pressed"]
+[connection signal="pressed" from="FreeLookCamera/VBoxContainer/DecalTool" to="." method="_on_decal_tool_pressed"]
+[connection signal="pressed" from="FreeLookCamera/VBoxContainer/EntityTool" to="." method="_on_entity_tool_pressed"]

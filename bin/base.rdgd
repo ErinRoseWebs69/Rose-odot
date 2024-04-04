@@ -1,0 +1,15 @@
+{
+	"point_entities":
+	[
+		"light_omni":
+		[
+			"name": "The name other entities will refer to this entity by."
+            "omni_range": "The range of the light source. A float value starting from 0.0",
+            "omni_attenuation": "a float value from 0.0 to 1.0",
+            "light_color": "The color of the light. Each RGB value is a float value from 0.0 to 1.0",
+            "light_energy": "Defines the intensity of the light source. A float value starting from 0.0",
+            "position": "Where in the map the light is placed. Each X,Y,Z coordinate is a float value.",
+			"editorModel": "editor/light.gltf"
+		]
+	]
+}
