@@ -78,8 +78,14 @@ func generateMesh():
 			var mi = MeshInstance3D.new()
 			
 			
-			print("res://maps/"+room)
-			mi.mesh = ResourceLoader.load("res://maps/"+room)
+			var room_mesh = ResourceLoader.load("res://maps/"+room)
+			mi.mesh = room_mesh
+			
+			for i in mi.get_surface_override_material_count():
+				var mat = mi.get_active_material(i).resource_name
+				#print(mi.get_active_material(i).resource_name)
+				mi.set_surface_override_material(i, ResourceLoader.load("res://materials/"+mat+".tres"))
+				print(ResourceLoader.load("res://materials/"+mat+".tres"))
 			
 			mi.name = room
 			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_DOUBLE_SIDED
