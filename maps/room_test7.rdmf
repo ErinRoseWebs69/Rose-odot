@@ -18,14 +18,14 @@
             "energy": 1.0,
             "position": [
                 -12.0,
-                -10.0,
-                4.0
+                4.0,
+                10.0
             ],
             "shadows": true
         },
         "Point.001": {
             "type": "light",
-            "name": "Point.001",
+            "name": "Point1",
             "range": 25.0,
             "attenuation": 1.0,
             "color": [
@@ -36,14 +36,14 @@
             "energy": 1.0,
             "position": [
                 0.0,
-                -10.0,
-                4.0
+                4.0,
+                10.0
             ],
             "shadows": true
         },
         "Point.002": {
             "type": "light",
-            "name": "Point.002",
+            "name": "Point2",
             "range": 25.0,
             "attenuation": 1.0,
             "color": [
@@ -54,8 +54,8 @@
             "energy": 1.0,
             "position": [
                 0.0,
-                2.0,
-                4.0
+                4.0,
+                -2.0
             ],
             "shadows": true
         },
@@ -75,8 +75,8 @@
 		"trigger1": {
 			"type": "trigger_multiple",
 			"name": "trigger1",
-			"position": [0,-1.5,2.5],
-			"size": [16,1,5],
+			"position": [0,2.5,1.5],
+			"size": [16,5,1],
 			"outputs": {
 				"output1": {
 					"input": "onEntered",
@@ -89,8 +89,76 @@
 					"targetEntity": "Point",
 					"output": "turnOn",
 					"parameters": ""
+				},
+				"output3": {
+					"input": "onEntered",
+					"targetEntity": "move1",
+					"output": "open",
+					"parameters": ""
+				},
+				"output4": {
+					"input": "onExited",
+					"targetEntity": "move1",
+					"output": "close",
+					"parameters": ""
 				}
 			}
+		},
+		"prop1": {
+			"type": "prop_static",
+			"position": [4,1,2],
+			"rotation": [0,45,0],
+			"model": "test/test1.obj",
+			"collisions": true
+		},
+		"move1": {
+			"type": "move_linear",
+			"name": "move1",
+			"position": [4,1,5],
+			"rotation": [0,0,0],
+			"model": "test/test1.obj",
+			"moveDistance": -5.0,
+			"moveAxis": "z",
+			"speed": 1.0,
+			"collisions": true,
+			"outputs": {
+				"output1": {
+					"input": "onOpen",
+					"targetEntity": "Point1",
+					"output": "turnOff",
+					"parameters": ""
+				},
+				"output2": {
+					"input": "onClose",
+					"targetEntity": "Point1",
+					"output": "turnOn",
+					"parameters": ""
+				},
+				"output3": {
+					"input": "onFullyOpened",
+					"targetEntity": "Point2",
+					"output": "turnOff",
+					"parameters": ""
+				},
+				"output4": {
+					"input": "onFullyClosed",
+					"targetEntity": "Point2",
+					"output": "turnOn",
+					"parameters": ""
+				}
+			}
+		},
+		"door1": {
+			"type": "door_rotating",
+			"name": "door1",
+			"position": [0,0,0],
+			"rotation": [0,0,0],
+			"model": "test/door_test2.obj",
+			"rotationPoint": [0,0,0],
+			"rotationDegrees": 45,
+			"rotationAxis": "y",
+			"speed": 1.0,
+			"collisions": true
 		}
     }
 }

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cuai37n7v5cdn"
-path="res://.godot/imported/test_brick_red_32x.png-6024a20f92f9c57f15cf294d677a50e0.ctex"
+uid="uid://bci1r2xthjefk"
+path="res://.godot/imported/test2.png-afb7c758a7ba71054069fd4d8af0d146.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://maps/test_brick_red_32x.png"
-dest_files=["res://.godot/imported/test_brick_red_32x.png-6024a20f92f9c57f15cf294d677a50e0.ctex"]
+source_file="res://materials/testing/test2.png"
+dest_files=["res://.godot/imported/test2.png-afb7c758a7ba71054069fd4d8af0d146.ctex"]
 
 [params]
 
@@ -21,7 +21,7 @@ compress/lossy_quality=0.7
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=false
+mipmaps/generate=true
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

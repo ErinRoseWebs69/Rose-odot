@@ -1,0 +1,5 @@
+{
+	"shadeMode": "pixel",
+	"albedo": "bricks/brick_red_32x.png",
+	"sampling": "nearest"
+}

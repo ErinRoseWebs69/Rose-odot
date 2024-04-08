@@ -3,20 +3,19 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cgnuhcgjpv0k2"
-path.s3tc="res://.godot/imported/missing.png-45b2613a767ce321401ca31f4dab7830.s3tc.ctex"
+path="res://.godot/imported/missing.png-45b2613a767ce321401ca31f4dab7830.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
-"vram_texture": true
+"vram_texture": false
 }
 
 [deps]
 
 source_file="res://materials/engine/missing.png"
-dest_files=["res://.godot/imported/missing.png-45b2613a767ce321401ca31f4dab7830.s3tc.ctex"]
+dest_files=["res://.godot/imported/missing.png-45b2613a767ce321401ca31f4dab7830.ctex"]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/hdr_compression=1

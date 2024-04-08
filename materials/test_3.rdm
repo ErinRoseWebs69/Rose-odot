@@ -1,0 +1,5 @@
+{
+	"shadeMode": "pixel",
+	"albedo": "testing/test2.png",
+	"sampling": "nearest"
+}
