@@ -101,6 +101,18 @@
 					"targetEntity": "move1",
 					"output": "close",
 					"parameters": ""
+				},
+				"output5": {
+					"input": "onEntered",
+					"targetEntity": "door1",
+					"output": "open",
+					"parameters": ""
+				},
+				"output6": {
+					"input": "onExited",
+					"targetEntity": "door1",
+					"output": "close",
+					"parameters": ""
 				}
 			}
 		},
@@ -120,6 +132,7 @@
 			"moveDistance": -5.0,
 			"moveAxis": "z",
 			"speed": 1.0,
+			"startState": "closed",
 			"collisions": true,
 			"outputs": {
 				"output1": {
@@ -157,8 +170,30 @@
 			"rotationPoint": [0,0,0],
 			"rotationDegrees": 45,
 			"rotationAxis": "y",
+			"rotationPoint": [-1,0,0],
+			"startState": "closed",
 			"speed": 1.0,
 			"collisions": true
+		},
+		"button1": {
+			"type": "testButtonArea",
+			"name": "testButton1",
+			"position": [3,1,-4],
+			"resetTime": 3.0,
+			"outputs": {
+				"output1": {
+					"input": "onPressed",
+					"targetEntity": "door1",
+					"output": "open",
+					"parameters": ""
+				},
+				"output2": {
+					"input": "onUnpressed",
+					"targetEntity": "door1",
+					"output": "close",
+					"parameters": ""
+				}
+			}
 		}
     }
 }

@@ -145,7 +145,7 @@ func generateEntities():
 					var ent = move_linear.new(pointEnts, world)
 					world.add_child(ent)
 				"door_rotating":
-					var ent = prop_static.new(pointEnts, world)
+					var ent = door_rotating.new(pointEnts, world)
 					world.add_child(ent)
 				
 				# misc.
@@ -164,6 +164,9 @@ func generateEntities():
 				## Temporary Entities (used for testing)
 				"cube":
 					var ent = tempCube.new()
+					world.add_child(ent)
+				"testButtonArea":
+					var ent = testButtonArea.new(pointEnts, world)
 					world.add_child(ent)
 			
 			# Sets a default player position and rotation if player_start is not found in file

@@ -1,6 +1,7 @@
 extends CharacterBody3D
 
 @onready var camera:Camera3D = $Head/Camera3D
+@onready var testVis = $Head/Camera3D/TestVisibility
 
 #====MOVEMENT VARIABLES====
 var mouse_sens: float = 0.001
@@ -29,8 +30,16 @@ const BOB_FREQ = 1
 const BOB_AMP = .2
 var t_bob = 0.0
 
+#====Extras====
+var interactReach:float = 2.0
+var grabReach:float = 2.0
+var canInteract:bool
+var canGrab:bool
+var interactList:Array
+
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	$Head/Camera3D/TestVisibility.target_position = Vector3(0,0,-(interactReach))
 
 func _input(event: InputEvent) -> void:
 	#if event is InputEventMouseButton:
@@ -41,14 +50,18 @@ func _input(event: InputEvent) -> void:
 		if event is InputEventMouseMotion:
 			var adjustMouseVector = (event as InputEventMouseMotion).xformed_by(
 				get_tree().root.get_final_transform()).relative
-			self.rotate_y(-event.relative.x * mouse_sens)
-			camera.rotate_x(-event.relative.y * mouse_sens)
+			$Head.rotate_y(-event.relative.x * mouse_sens)
+			camera.rotate_x(event.relative.y * mouse_sens)
 			camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-80), deg_to_rad(60))
 	
 	if Input.is_action_just_pressed("reload"):
 		var root = get_tree().get_first_node_in_group("root")
 		#root.clearMap()
 		root.genMap()
+	if Input.is_action_just_pressed("interact"):
+		interact("press")
+	if Input.is_action_just_released("interact"):
+		interact("release")
 	
 func _process(delta):
 	#if Input.is_action_just_pressed("restart"):
@@ -133,7 +146,7 @@ func _physics_process(delta):
 	grounded_prev = grounded
 	# Get the input direction and handle the movement/deceleration.
 	var input_dir: Vector2 = Input.get_vector("left", "right", "forward", "backward")
-	wish_dir = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+	wish_dir = ($Head.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	projected_speed = (velocity * Vector3(1, 0, 1)).dot(wish_dir)
 	
 #	speed_label.text = str( int( ( velocity * Vector3(1, 0, 1) ).length() ) )
@@ -154,6 +167,12 @@ func _physics_process(delta):
 	#camera.transform.origin = _headbob(t_bob)
 	
 	move_and_slide()
+	
+	for col_idx in get_slide_collision_count():
+		var col := get_slide_collision(col_idx)
+		if col.get_collider() is RigidBody3D:
+			col.get_collider().apply_central_impulse(-col.get_normal() * 2.0)
+			col.get_collider().apply_impulse(-col.get_normal() * 0.01, col.get_position())
 
 #func _headbob(time) -> Vector3:
 	#var pos = Vector3.ZERO
@@ -166,3 +185,28 @@ func _physics_process(delta):
 
 func restartLevel():
 	pass
+
+func interact(pressState):
+	var object
+	var objectRequiresHold:bool
+	var activeState:String
+	if pressState == "press":
+		activeState == "press"
+	elif pressState == "release":
+		activeState == "release"
+	
+	if testVis.is_colliding() and testVis.get_collider().is_in_group("interactable"):
+		object = testVis.get_collider()
+		print(testVis.get_collider())
+		if testVis.get_collider().has_method("press"):
+			if object.requiresHold == false and object.canPress == true:
+				object.press(pressState)
+				object = null
+			elif object.requiresHold == true:
+				object.press(pressState)
+	if object != null and testVis.is_colliding() == false and activeState == "press":
+		object.press("release")
+				
+	if testVis.is_colliding() and testVis.get_collider().is_in_group("grabbable"):
+		print(testVis.get_collider())
+		#do physics object grabbing here
