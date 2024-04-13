@@ -1,9 +1,9 @@
 [gd_resource type="StandardMaterial3D" load_steps=2 format=3]
 
-[ext_resource type="Texture2D" path="res://materials/engine/missing.png" id="1_6rnq5"]
+[ext_resource type="Texture2D" path="res://materials/engine/missing.png" id="1_vjp6d"]
 
 [resource]
-albedo_texture = ExtResource("1_6rnq5")
+albedo_texture = ExtResource("1_vjp6d")
 uv1_triplanar = true
 uv2_triplanar = true
 texture_filter = 0

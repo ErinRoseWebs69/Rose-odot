@@ -40,8 +40,6 @@ func _init(entityData, worldNode):
 
 func press(pressState):
 	if pressState == "press":
-		if requiresHold == false:
-			canPress == false
 		_buttonPressed()
 	elif pressState == "release":
 		_buttonReleased()

@@ -1,7 +1,7 @@
 [gd_resource type="StandardMaterial3D" load_steps=2 format=3]
 
-[ext_resource type="Texture2D" path="res://materials/bricks/brick_red_32x.png" id="1_8xcp0"]
+[ext_resource type="Texture2D" path="res://materials/bricks/brick_red_32x.png" id="1_oysct"]
 
 [resource]
-albedo_texture = ExtResource("1_8xcp0")
+albedo_texture = ExtResource("1_oysct")
 texture_filter = 0

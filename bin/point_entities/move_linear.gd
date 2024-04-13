@@ -4,7 +4,7 @@ class_name move_linear
 
 var moveDistance:float
 var interpType:String
-var speed:float
+var duration:float
 var moveAxis:String
 var physics
 var currentState = "closed"
@@ -42,7 +42,7 @@ func _init(entityData, worldNode):
 	rotation_degrees.z = entityData["rotation"][2]
 	
 	moveDistance = entityData["moveDistance"]
-	speed = entityData["speed"]
+	duration = entityData["duration"]
 	moveAxis = entityData["moveAxis"]
 	
 	startPos.x = entityData["position"][0]
@@ -60,16 +60,21 @@ func _init(entityData, worldNode):
 	if entityData.has("outputs"):
 		outputData = entityData["outputs"]
 
+var tween
 func open(params):
 	_onOpen()
-	var tween = create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_LINEAR)
-	tween.tween_property(self, "global_position", endPos, speed) #prefer _getDistance(endPos) * speed
+	if tween:
+		tween.kill()
+	tween = create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_LINEAR)
+	tween.tween_property(self, "global_position", endPos, _moveDuration(endPos)) #prefer _getDistance(endPos) * speed
 	tween.connect("finished", _onFullyOpened)
 
 func close(params):
 	_onClose()
-	var tween = create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_LINEAR)
-	tween.tween_property(self, "global_position", startPos, speed)
+	if tween:
+		tween.kill()
+	tween = create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_LINEAR)
+	tween.tween_property(self, "global_position", startPos, _moveDuration(startPos))
 	tween.connect("finished", _onFullyClosed)
 
 ### Internal Functions
@@ -119,10 +124,20 @@ func _onClose():
 					var params = outputData[data]["parameters"]
 					targetEntity.call(output, params)
 
-func _getDistance(pos) -> float:
-	var distance = global_position.distance_to(pos)
-	print(distance)
-	return distance
+func _moveDuration(movingDistance):
+	var currentDist = global_position
+	var distanceDif
+	
+	match moveAxis:
+		"x":
+			distanceDif = abs(movingDistance.x - currentDist.x)
+		"y":
+			distanceDif = abs(movingDistance.y - currentDist.y)
+		"z":
+			distanceDif = abs(movingDistance.z - currentDist.z)
+	
+	var finalDuration = duration * (distanceDif / abs(moveDistance))
+	return finalDuration
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

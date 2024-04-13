@@ -10,9 +10,13 @@ var colShape = ConvexPolygonShape3D.new()
 @export var map_file:String
 var data_file_path:String
 
+var gravity:float = 9.8 #DEFAULT
+var gravityDefault:float = 9.8
+
 @onready var player = $player
 
 # Called when the node enters the scene tree for the first time.
+# If the script is ran in the editor instance, then pass. Else, generate the map
 func _ready():
 	if Engine.is_editor_hint():
 		pass
@@ -20,24 +24,29 @@ func _ready():
 		genMap()
 
 func genMap():
+	# This is for clearing previous level data
 	if not world.get_children().is_empty():
 		for i in world.get_children():
-			### Do differently, as this could crash the engine if Nodes are actively doing anything
-			# i mighta fixed it lol
-			i.free()
+			i.free() # While this does work, it could potentially cause problems. queue_free didn't work.
 		print("Cleared previous map.")
 	
+	# Get the map file, which is a JSON
 	data_file_path = "res://maps/" + map_file
 	mapData = loadMapJson(data_file_path)
 	#world.rotate_x(PI/2)
+	
+	# Generate the level if the world node has no children (prevents multiple levels being loaded at once)
 	if world.get_children().is_empty():
+		gravity = 0.0
 		generateWorldData()
 		GenMats.getMaterials()
 		generateMesh()
 		generateEntities()
 		#world.rotation = Vector3(-PI/2,0,0)
 		print("Map generation complete.")
+		gravity = gravityDefault
 
+# Wait... I don't use this anymore lol. Keep just in case, I guess?
 func clearMap():
 	if not world.get_children().is_empty():
 		for i in world.get_children():
@@ -45,6 +54,8 @@ func clearMap():
 		print("Cleared previous map.")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
+# For the in-editor loading. In-editor loading is for previewing and debugging,
+# but nothing beats the in-game results :3
 func _process(delta):
 	if update:
 		genMap()
@@ -55,6 +66,8 @@ func _process(delta):
 		#update = false
 		#clearData = false
 
+# Read the RDMF (JSON) and save the contents to a variable
+# I'm avoiding hard-coding the RDMF extension, as its literally just a JSON, no custom elements.
 func loadMapJson(filePath : String):
 	if FileAccess.file_exists(filePath):
 		var dataFile = FileAccess.open(filePath, FileAccess.READ)
@@ -67,37 +80,44 @@ func loadMapJson(filePath : String):
 	else:
 		print("File doesn't exist")
 
+# As of now this doesn't do anything, but it will probably store data in the future, such as skyboxes,
+# directional lighting, etc.
 func generateWorldData():
 	#print("world")
 	pass
 
+# Generate the base level geometry
 func generateMesh():
 	if mapData == null:
 		print("Error: map file is null, or something was not formatted correctly")
 		return
-		
+	
+	# Check if RDMF file has a "geo" dictionary
 	if mapData.has("geo"):
 		print(mapData["geo"])
 		for room in mapData["geo"]:
-			print("room: " + room)
+			#print("room: " + room)
+			
+			# Create new MeshInstance3D for each model instance loaded in the RDMF
 			var mi = MeshInstance3D.new()
-			
-			
 			var room_mesh = ResourceLoader.load("res://maps/"+room)
 			mi.mesh = room_mesh
+			mi.name = room
+			mi.create_trimesh_collision()
+			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_DOUBLE_SIDED
+			# NOTE: if using DirectionalLight3D, mesh requires additional geometry above to avoid
+			# the light leaking thru edges of ceiling/wall points
 			
+			# Iterate thru the materials the model comes with, and override them with their proper Godot ones
 			for i in mi.get_surface_override_material_count():
 				var mat = mi.get_active_material(i).resource_name
 				mi.set_surface_override_material(i, ResourceLoader.load("res://materials/"+mat+".tres"))
 				
-				#TEMPORARY
+				# TEMPORARY, was used to test a texture bug
 				#mi.set_surface_override_material(i, ResourceLoader.load("res://materials/test_3.tres"))
 			
-			mi.name = room
-			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_DOUBLE_SIDED
-			
+			# Now add the Mesh to the world
 			world.add_child(mi)
-			mi.create_trimesh_collision()
 			#mi.rotation = Vector3(PI/2,0,0)
 		
 	else:
@@ -113,10 +133,13 @@ func generateMesh():
 # npc_generic (a generic NPC with no movement code or anything)
 # while i will be making some general NPCs, most of them will be dedicated to the current game. 
 
+# Generate the entities defined in the RDMF
 func generateEntities():
 	if mapData.has("point_entities"):
 		for entity in mapData["point_entities"]:
 			var pointEnts = mapData["point_entities"][entity]
+			
+			### Create entities from custom classes and add them to the world node
 			match pointEnts["type"]:
 				
 				## Single Instance Entities (if multiple exist, use only first instance found in file)

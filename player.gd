@@ -36,6 +36,9 @@ var grabReach:float = 2.0
 var canInteract:bool
 var canGrab:bool
 var interactList:Array
+var isInteracting:bool
+
+var tempObject
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -59,9 +62,11 @@ func _input(event: InputEvent) -> void:
 		#root.clearMap()
 		root.genMap()
 	if Input.is_action_just_pressed("interact"):
-		interact("press")
+		interactPressed()
 	if Input.is_action_just_released("interact"):
-		interact("release")
+		interactReleased()
+	if Input.is_action_pressed("interact"):
+		interactHold()
 	
 func _process(delta):
 	#if Input.is_action_just_pressed("restart"):
@@ -186,27 +191,38 @@ func _physics_process(delta):
 func restartLevel():
 	pass
 
-func interact(pressState):
-	var object
-	var objectRequiresHold:bool
-	var activeState:String
-	if pressState == "press":
-		activeState == "press"
-	elif pressState == "release":
-		activeState == "release"
-	
+
+var currentInteractObject
+func interactPressed():
 	if testVis.is_colliding() and testVis.get_collider().is_in_group("interactable"):
-		object = testVis.get_collider()
-		print(testVis.get_collider())
-		if testVis.get_collider().has_method("press"):
-			if object.requiresHold == false and object.canPress == true:
-				object.press(pressState)
+		currentInteractObject = testVis.get_collider()
+		if currentInteractObject.has_method("press"):
+			currentInteractObject.press("press")
+
+func interactHold():
+	if not testVis.is_colliding() and currentInteractObject != null:
+		if currentInteractObject.has_method("press"):
+			currentInteractObject.press("release")
+
+func interactReleased():
+	if testVis.is_colliding() and testVis.get_collider().is_in_group("interactable"):
+		currentInteractObject = testVis.get_collider()
+		if currentInteractObject.has_method("press"):
+			currentInteractObject.press("release")
+
+func interact():
+	var object
+	
+	if isInteracting == true:
+		pass
+	elif isInteracting == false:
+		if testVis.is_colliding() and testVis.get_collider().is_in_group("interactable"):
+			object = testVis.get_collider()
+			if object.has_method("press"):
+				object.press("release")
 				object = null
-			elif object.requiresHold == true:
-				object.press(pressState)
-	if object != null and testVis.is_colliding() == false and activeState == "press":
-		object.press("release")
-				
-	if testVis.is_colliding() and testVis.get_collider().is_in_group("grabbable"):
-		print(testVis.get_collider())
-		#do physics object grabbing here
+		elif object != null:
+			if object.has_method("press"):
+				object.press("release")
+				object = null
+	### TODO: physics object grabbing

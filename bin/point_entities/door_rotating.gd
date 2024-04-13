@@ -4,12 +4,11 @@ class_name door_rotating
 
 var rotateDegrees:float
 var interpType:String
-var speed:float
+var duration:float
 var rotateAxis:String
 var currentState = "closed"
 var startAngle:Vector3
 var endAngle:Vector3
-var rotationPoint:Vector3
 
 var outputData
 var world
@@ -42,16 +41,12 @@ func _init(entityData, worldNode):
 	rotation_degrees.z = entityData["rotation"][2]
 	
 	rotateDegrees = entityData["rotationDegrees"]
-	speed = entityData["speed"]
+	duration = entityData["duration"]
 	rotateAxis = entityData["rotationAxis"]
 	
 	startAngle.x = entityData["rotation"][0]
 	startAngle.y = entityData["rotation"][1]
 	startAngle.z = entityData["rotation"][2]
-	
-	rotationPoint.x = entityData["rotationPoint"][0] + entityData["position"][0]
-	rotationPoint.y = entityData["rotationPoint"][1] + entityData["position"][1]
-	rotationPoint.z = entityData["rotationPoint"][2] + entityData["position"][2]
 	
 	match rotateAxis:
 		"x":
@@ -63,19 +58,23 @@ func _init(entityData, worldNode):
 	
 	if entityData.has("outputs"):
 		outputData = entityData["outputs"]
-
+var tween
 func open(params):
 	_onOpen()
-	var tween = create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_LINEAR)
+	if tween:
+		tween.kill()
+	tween = create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_LINEAR)
 	currentState = "opening"
-	tween.tween_property(self, "global_rotation_degrees", endAngle, speed) #prefer _getDistance(endPos) * speed
+	tween.tween_property(self, "global_rotation_degrees", endAngle, _rotateDuration(endAngle)) #prefer _getDistance(endPos) * speed
 	tween.connect("finished", _onFullyOpened)
 
 func close(params):
 	_onClose()
-	var tween = create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_LINEAR)
+	if tween:
+		tween.kill()
+	tween = create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_LINEAR)
 	currentState = "closing"
-	tween.tween_property(self, "global_rotation_degrees", startAngle, speed)
+	tween.tween_property(self, "global_rotation_degrees", startAngle, _rotateDuration(startAngle))
 	tween.connect("finished", _onFullyClosed)
 
 func toggleState(params):
@@ -132,11 +131,21 @@ func _onClose():
 					var output = outputData[data]["output"]
 					var params = outputData[data]["parameters"]
 					targetEntity.call(output, params)
-
-func _getDistance(pos) -> float:
-	var distance = global_position.distance_to(pos)
-	print(distance)
-	return distance
+	
+func _rotateDuration(moveAngle):
+	var currentRot = global_rotation_degrees
+	var angleDif
+	
+	match rotateAxis:
+		"x":
+			angleDif = abs(moveAngle.x - currentRot.x)
+		"y":
+			angleDif = abs(moveAngle.y - currentRot.y)
+		"z":
+			angleDif = abs(moveAngle.z - currentRot.z)
+	
+	var finalDuration = duration * (angleDif / rotateDegrees)
+	return finalDuration
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
