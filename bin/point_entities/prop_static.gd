@@ -16,10 +16,15 @@ func _init(entityData, world):
 	rotation_degrees.x = entityData["rotation"][0]
 	rotation_degrees.y = entityData["rotation"][1]
 	rotation_degrees.z = entityData["rotation"][2]
+	
+	for i in get_surface_override_material_count():
+		if get_active_material(i) != null:
+			var mat = get_active_material(i).resource_name
+			set_surface_override_material(i, ResourceLoader.load("res://materials/"+mat+".tres"))
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	return
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

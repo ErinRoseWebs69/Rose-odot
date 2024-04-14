@@ -84,6 +84,13 @@ interact={
 ]
 }
 
+[layer_names]
+
+3d_physics/layer_1="world"
+3d_physics/layer_2="player"
+3d_physics/layer_3="ai"
+3d_physics/layer_4="physics"
+
 [physics]
 
 3d/physics_engine="JoltPhysics3D"

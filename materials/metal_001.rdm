@@ -1,0 +1,7 @@
+{
+	"shadeMode": "pixel",
+	"albedo": "metal/metal_001.png",
+	"sampling": "nearest",
+	"uv1Triplanar": true,
+	"uv2Triplanar": true
+}

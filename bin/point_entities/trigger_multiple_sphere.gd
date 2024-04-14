@@ -1,6 +1,6 @@
 extends Area3D
 
-class_name trigger_multiple
+class_name trigger_multiple_sphere
 
 #var targetEntity
 var world
@@ -21,10 +21,8 @@ func _init(entityData, worldNode):
 	world = worldNode
 	# Generate trigger data, such as shape and size
 	var col = CollisionShape3D.new()
-	var colShape = BoxShape3D.new()
-	colShape.size.x = entityData["size"][0]
-	colShape.size.y = entityData["size"][1]
-	colShape.size.z = entityData["size"][2]
+	var colShape = SphereShape3D.new()
+	colShape.radius = entityData["radius"]
 	position.x = entityData["position"][0]
 	position.y = entityData["position"][1]
 	position.z = entityData["position"][2]
@@ -42,20 +40,17 @@ func _init(entityData, worldNode):
 	
 	print(entityData["collisionLayers"])
 	
-	set_collision_mask_value(1, false)
 	for layer in entityData["collisionLayers"]:
 		match layer:
 			"player":
-				set_collision_mask_value(2, true)
+				set_collision_layer_value(2, true)
 			"ai":
-				set_collision_mask_value(3, true)
+				set_collision_layer_value(3, true)
 			"physics":
-				set_collision_mask_value(4, true)
+				set_collision_layer_value(4, true)
 	
 	filterType = entityData["filterType"]
 	filter = entityData["filter"]
-	
-	print("filter data: ", filterType, filter)
 	
 	add_child(col)
 

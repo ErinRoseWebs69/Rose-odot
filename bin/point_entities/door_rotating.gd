@@ -56,6 +56,11 @@ func _init(entityData, worldNode):
 		"z":
 			endAngle = Vector3(startAngle.x, startAngle.y, (startAngle.z + rotateDegrees))
 	
+	for i in mi.get_surface_override_material_count():
+		if mi.get_active_material(i) != null:
+			var mat = mi.get_active_material(i).resource_name
+			mi.set_surface_override_material(i, ResourceLoader.load("res://materials/"+mat+".tres"))
+	
 	if entityData.has("outputs"):
 		outputData = entityData["outputs"]
 var tween

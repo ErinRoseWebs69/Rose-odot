@@ -43,6 +43,7 @@ var tempObject
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	$Head/Camera3D/TestVisibility.target_position = Vector3(0,0,-(interactReach))
+	set_collision_layer_value(2, true)
 
 func _input(event: InputEvent) -> void:
 	#if event is InputEventMouseButton:

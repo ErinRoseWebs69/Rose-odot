@@ -110,8 +110,9 @@ func generateMesh():
 			
 			# Iterate thru the materials the model comes with, and override them with their proper Godot ones
 			for i in mi.get_surface_override_material_count():
-				var mat = mi.get_active_material(i).resource_name
-				mi.set_surface_override_material(i, ResourceLoader.load("res://materials/"+mat+".tres"))
+				if mi.get_active_material(i) != null:
+					var mat = mi.get_active_material(i).resource_name
+					mi.set_surface_override_material(i, ResourceLoader.load("res://materials/"+mat+".tres"))
 				
 				# TEMPORARY, was used to test a texture bug
 				#mi.set_surface_override_material(i, ResourceLoader.load("res://materials/test_3.tres"))
@@ -164,6 +165,9 @@ func generateEntities():
 				"prop_static":
 					var ent = prop_static.new(pointEnts, world)
 					world.add_child(ent)
+				"prop_physics":
+					var ent = prop_physics.new(pointEnts, world)
+					world.add_child(ent)
 				"move_linear":
 					var ent = move_linear.new(pointEnts, world)
 					world.add_child(ent)
@@ -181,7 +185,7 @@ func generateEntities():
 					var ent = trigger_multiple.new(pointEnts, world)
 					world.add_child(ent)
 				"trigger_multiple_sphere": #TODO: actually implement
-					var ent = trigger_multiple.new(pointEnts, world)
+					var ent = trigger_multiple_sphere.new(pointEnts, world)
 					world.add_child(ent)
 				
 				## Temporary Entities (used for testing)

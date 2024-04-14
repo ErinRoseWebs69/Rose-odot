@@ -45,7 +45,7 @@ func press(pressState):
 		_buttonReleased()
 
 func _buttonPressed():
-	print("i was pressed!")
+	#print("i was pressed!")
 	for data in outputData:
 		var input = outputData[data]["input"]
 		if input == "onPressed":
@@ -56,7 +56,7 @@ func _buttonPressed():
 				targetEntity.call(output, params)
 
 func _buttonReleased():
-	print("I was released!")
+	#print("I was released!")
 	for data in outputData:
 		var input = outputData[data]["input"]
 		if input == "onUnpressed":
