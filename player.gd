@@ -1,7 +1,7 @@
 extends CharacterBody3D
 
 @onready var camera:Camera3D = $Head/Camera3D
-@onready var gunSprite:AnimatedSprite2D = $Head/CanvasLayer/gunBase/AnimatedSprite2D
+@onready var testVis = $Head/Camera3D/TestVisibility
 
 #====MOVEMENT VARIABLES====
 var mouse_sens: float = 0.001
@@ -30,73 +30,20 @@ const BOB_FREQ = 1
 const BOB_AMP = .2
 var t_bob = 0.0
 
+#====Extras====
+var interactReach:float = 2.0
+var grabReach:float = 2.0
+var canInteract:bool
+var canGrab:bool
+var interactList:Array
+var isInteracting:bool
 
-
-#====GUNGAME VARIABLES====
-@onready var anim_sprite = $Head/CanvasLayer/gunBase/AnimatedSprite2D
-@onready var raycast = $Head/Camera3D/RayCast3D
-@onready var meleeRaycast = $Head/Camera3D/RayCast3D2
-@onready var SFXPLAYER = null
-var canShoot:bool = true
-var isDead:bool = false
-var currentGun:String
-var gunInv:Dictionary = {
-	"none": "none",
-	"wrench": "locked",
-	"pistol": "locked",
-	"shotgun": "locked",
-	"repeater": "locked",
-	"bow": "locked",
-	"grenade": "locked"
-}
-var health = 100
-
-var wrenchDamage = 5
-var pistolDamage = 3
-var shotgunDamage = 7
-var repeaterDamage = 3
-var bowDamage = 20
-var grenadeDamage = 20
-
-var wrenchCooldown:float = 2.0
-var pistolCooldown:float = 2.0
-var shotgunCooldown:float = 3.0
-var repeaterCooldown:float = 0.25
-var bowCooldown:float = 5.0
-var grenadeCooldown:float = 6.0
-var pistolReloadTime:float = 5.0
-var shotgunReloadTime:float = 7.0
-var repaterReloadTime:float = 10.0
-var bowReloadTime:float = 5.0
-var grenadeReloadTime:float = 6.0
-#ammo size
-var pistolAmmo:int
-var shotgunAmmo:int
-var repeaterAmmo:int
-var bowAmmo:int
-var grenadeAmmo:int
-var pistolMagSize:int = 12
-var shotgunMagSize:int = 6
-var repeaterMagSize:int = 36
-var bowMagSize:int = 1
-var grenadeMagSize:int = 1
-var pistolMaxAmmo:int = 120
-var shotgunMaxAmmo:int = 100
-var repeaterMaxAmmo:int = 360
-var bowMaxAmmo:int = 20
-var grenadeMaxAmmo:int = 21
-var pistolMaxAmmoCount:int
-var shotgunMaxAmmoCount:int
-var repeaterMaxAmmoCount:int
-var bowMaxAmmoCount:int
-var grenadeMaxAmmoCount:int
+var tempObject
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	anim_sprite.animation_finished.connect(shootAnimDone)
-	currentGun = "none"
-	#replace later
-	pistolMaxAmmoCount = pistolAmmo + pistolMaxAmmo
+	$Head/Camera3D/TestVisibility.target_position = Vector3(0,0,-(interactReach))
+	set_collision_layer_value(2, true)
 
 func _input(event: InputEvent) -> void:
 	#if event is InputEventMouseButton:
@@ -107,69 +54,25 @@ func _input(event: InputEvent) -> void:
 		if event is InputEventMouseMotion:
 			var adjustMouseVector = (event as InputEventMouseMotion).xformed_by(
 				get_tree().root.get_final_transform()).relative
-			self.rotate_y(-event.relative.x * mouse_sens)
-			camera.rotate_x(-event.relative.y * mouse_sens)
+			$Head.rotate_y(-event.relative.x * mouse_sens)
+			camera.rotate_x(event.relative.y * mouse_sens)
 			camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-80), deg_to_rad(60))
 	
 	if Input.is_action_just_pressed("reload"):
 		var root = get_tree().get_first_node_in_group("root")
 		#root.clearMap()
 		root.genMap()
+	if Input.is_action_just_pressed("interact"):
+		interactPressed()
+	if Input.is_action_just_released("interact"):
+		interactReleased()
+	if Input.is_action_pressed("interact"):
+		interactHold()
 	
-	if isDead:
-		return
-	if Input.is_action_just_pressed("primaryFire"):
-		shoot(0)
-	if Input.is_action_just_pressed("altFire"):
-		shoot(1)
-	if Input.is_action_just_pressed("gun1"):
-		switchWeapons(1)
-	if Input.is_action_just_pressed("gun2"):
-		switchWeapons(2)
-	if Input.is_action_just_pressed("gun3"):
-		switchWeapons(3)
-	if Input.is_action_just_pressed("gun4"):
-		switchWeapons(4)
-	if Input.is_action_just_pressed("gun5"):
-		switchWeapons(5)
-	if Input.is_action_just_pressed("gun6"):
-		switchWeapons(6)
-	#if Input.is_action_just_pressed("reload"):
-		#match currentGun:
-			#"wrench":
-				#pass
-			#"pistol":
-				#if pistolMaxAmmoCount > pistolMagSize:
-					#pistolAmmo = pistolMagSize
-				#else:
-					#pistolAmmo = pistolMaxAmmoCount
-			#"shotgun":
-				#if shotgunMaxAmmoCount > shotgunMagSize:
-					#shotgunAmmo = shotgunMagSize
-				#else:
-					#shotgunAmmo = shotgunMaxAmmoCount
-			#"repeater":
-				#if repeaterAmmo > repeaterMagSize:
-					#repeaterAmmo = repeaterMagSize
-				#else:
-					#repeaterAmmo = repeaterMaxAmmoCount
-			#"bow":
-				#if bowAmmo > bowMagSize:
-					#bowAmmo = bowMagSize
-				#else:
-					#bowAmmo = repeaterMaxAmmoCount
-			#"grenade":
-				#if grenadeAmmo > grenadeMagSize:
-					#grenadeAmmo = grenadeMagSize
-				#else:
-					#grenadeAmmo = grenadeMaxAmmoCount
-
 func _process(delta):
 	#if Input.is_action_just_pressed("restart"):
-		#restartLevel()
-	
-	if isDead:
-		return
+		#restartLevel
+	pass
 
 func clip_velocity(normal: Vector3, overbounce: float, delta) -> void:
 	var correction_amount: float = 0
@@ -246,12 +149,10 @@ func ground_move(delta):
 		clip_velocity(get_wall_normal(), 1, delta)
 
 func _physics_process(delta):
-	if isDead:
-		return
 	grounded_prev = grounded
 	# Get the input direction and handle the movement/deceleration.
 	var input_dir: Vector2 = Input.get_vector("left", "right", "forward", "backward")
-	wish_dir = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+	wish_dir = ($Head.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	projected_speed = (velocity * Vector3(1, 0, 1)).dot(wish_dir)
 	
 #	speed_label.text = str( int( ( velocity * Vector3(1, 0, 1) ).length() ) )
@@ -269,149 +170,60 @@ func _physics_process(delta):
 			ground_move(delta)
 	
 	t_bob += delta * velocity.length() * float(is_on_floor())
-	camera.transform.origin = _headbob(t_bob)
-	gunSprite.transform.origin = _gunbob(t_bob)
+	#camera.transform.origin = _headbob(t_bob)
 	
 	move_and_slide()
+	
+	for col_idx in get_slide_collision_count():
+		var col := get_slide_collision(col_idx)
+		if col.get_collider() is RigidBody3D:
+			col.get_collider().apply_central_impulse(-col.get_normal() * 2.0)
+			col.get_collider().apply_impulse(-col.get_normal() * 0.01, col.get_position())
 
-func _headbob(time) -> Vector3:
-	var pos = Vector3.ZERO
-	pos.y = sin(time * BOB_FREQ) * BOB_AMP
-	pos.x = cos(time * BOB_FREQ / 2) * BOB_AMP
-	
-	var low_pos = BOB_AMP - 0.03
-	
-	return pos
-
-func _gunbob(time) -> Vector2:
-	var pos = Vector2.ZERO
-	pos.y = sin(time * BOB_FREQ) * (BOB_AMP * 80)
-	pos.x = cos(time * BOB_FREQ / 2) * (BOB_AMP * 80)
-	
-	var low_pos = BOB_AMP - 1.0
-	
-	return pos
+#func _headbob(time) -> Vector3:
+	#var pos = Vector3.ZERO
+	#pos.y = sin(time * BOB_FREQ) * BOB_AMP
+	#pos.x = cos(time * BOB_FREQ / 2) * BOB_AMP
+	#
+	#var low_pos = BOB_AMP - 0.03
+	#
+	#return pos
 
 func restartLevel():
 	pass
 
-func takeDamage(damage):
-	health -= damage
-	$Head/CanvasLayer/BoxContainer/Label.text = "health: " + str(health)
-	print(health)
-	if health <= 0:
-		print("ded")
 
-func shoot(attackType:int):
-	if not canShoot:
-		return
-	canShoot = false
-	anim_sprite.play("fire")
-	#firing SFX manager
-	if currentGun == "wrench":
-		print("melee attack")
-		if meleeRaycast.is_colliding() and meleeRaycast.get_collider().has_method("takeDamage"):
-			meleeRaycast.get_collider().takeDamage(5)
-	elif currentGun == "grenade":
-		# TODO: actually make grenade functionality lol
-		print("grenade things done")
-		reload("grenade")
-	elif currentGun == "none":
-		print("no weapon selected")
-	else:
-		print("gun shot")
-		var damage
-		if raycast.is_colliding() and raycast.get_collider().has_method("takeDamage"):
-			#raycast.get_collider().takeDamage(3)
-			#change depending on weapon
-			match currentGun:
-				"pistol":
-					damage = 3
-					if pistolAmmo <= 0:
-						reload("pistol")
-				"shotgun":
-					damage = 7
-					if shotgunAmmo <= 0:
-						reload("shotgun")
-				"repeater":
-					damage = 2
-					if repeaterAmmo <= 0:
-						reload("repeater")
-				"bow":
-					damage = 20
-					if bowAmmo <= 0:
-						reload("bow")
-			raycast.get_collider().takeDamage(damage)
+var currentInteractObject
+func interactPressed():
+	if testVis.is_colliding() and testVis.get_collider().is_in_group("interactable"):
+		currentInteractObject = testVis.get_collider()
+		if currentInteractObject.has_method("press"):
+			currentInteractObject.press("press")
 
-func shootAnimDone():
-	canShoot = true
+func interactHold():
+	if not testVis.is_colliding() and currentInteractObject != null:
+		if currentInteractObject.has_method("press"):
+			currentInteractObject.press("release")
 
-func switchWeapons(gunIndex):
-	match gunIndex:
-		1:
-			print(str(gunInv.get("wrench")))
-			if gunInv.get("wrench") == "unlocked":
-				print("switched to fanblade")
-				currentGun = "wrench"
-				print("current weapon: " + currentGun)
-			else:
-				print("fanblade locked")
-		2:
-			print(str(gunInv.get("pistol")))
-			if gunInv.get("pistol") == "unlocked":
-				print("switched to pistol")
-				currentGun = "pistol"
-				print("current weapon: " + currentGun)
-			else:
-				print("pistol locked")
-		3:
-			print(str(gunInv.get("shotgun")))
-			if gunInv.get("shotgun") == "unlocked":
-				print("switched to shotgun")
-				currentGun = "shotgun"
-				print("current weapon: " + currentGun)
-			else:
-				print("shotgun locked")
-		4:
-			print(str(gunInv.get("repeater")))
-			if gunInv.get("repeater") == "unlocked":
-				print("switched to repeater")
-				currentGun = "repeater"
-				print("current weapon: " + currentGun)
-			else:
-				print("repeater locked")
-		5:
-			print(str(gunInv.get("bow")))
-			if gunInv.get("bow") == "unlocked":
-				print("switched to bow")
-				currentGun = "bow"
-				print("current weapon: " + currentGun)
-			else:
-				print("bow locked")
-		6:
-			print(str(gunInv.get("grenade")))
-			if gunInv.get("grenade") == "unlocked":
-				print("switched to grenade")
-				currentGun = "grenade"
-				print("current weapon: " + currentGun)
-			else:
-				print("grenade locked")
-	$Head/CanvasLayer/BoxContainer/Label2.text = "weapon: " + currentGun
+func interactReleased():
+	if testVis.is_colliding() and testVis.get_collider().is_in_group("interactable"):
+		currentInteractObject = testVis.get_collider()
+		if currentInteractObject.has_method("press"):
+			currentInteractObject.press("release")
 
-func reload(gun):
-	pass
-
-func unlockGun(gun):
-	match gun:
-		"wrench":
-			gunInv["wrench"] = "unlocked"
-		"pistol":
-			gunInv["pistol"] = "unlocked"
-		"shotgun":
-			gunInv["shotgun"] = "unlocked"
-		"repeater":
-			gunInv["repeater"] = "unlocked"
-		"bow":
-			gunInv["bow"] = "unlocked"
-		"grenade":
-			gunInv["grenade"] = "unlocked"
+func interact():
+	var object
+	
+	if isInteracting == true:
+		pass
+	elif isInteracting == false:
+		if testVis.is_colliding() and testVis.get_collider().is_in_group("interactable"):
+			object = testVis.get_collider()
+			if object.has_method("press"):
+				object.press("release")
+				object = null
+		elif object != null:
+			if object.has_method("press"):
+				object.press("release")
+				object = null
+	### TODO: physics object grabbing

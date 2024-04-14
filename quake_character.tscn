@@ -1,138 +1,24 @@
-[gd_scene load_steps=11 format=3 uid="uid://h5gkm3sk8iid"]
+[gd_scene load_steps=3 format=3 uid="uid://h5gkm3sk8iid"]
 
 [ext_resource type="Script" path="res://player.gd" id="1_y2vro"]
-[ext_resource type="Texture2D" uid="uid://dfqg075k2rd7j" path="res://textures/temp_gun_sprite.png" id="2_ssi5g"]
-[ext_resource type="Texture2D" uid="uid://dgay8pglsn0ct" path="res://textures/crosshair.png" id="3_k28pa"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_je40t"]
-atlas = ExtResource("2_ssi5g")
-region = Rect2(32, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_y6qsi"]
-atlas = ExtResource("2_ssi5g")
-region = Rect2(64, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_bre76"]
-atlas = ExtResource("2_ssi5g")
-region = Rect2(96, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_8aga7"]
-atlas = ExtResource("2_ssi5g")
-region = Rect2(0, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_hmjqe"]
-atlas = ExtResource("2_ssi5g")
-region = Rect2(0, 0, 32, 32)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_w1dkd"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_je40t")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_y6qsi")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_bre76")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_8aga7")
-}],
-"loop": false,
-"name": &"fire",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_hmjqe")
-}],
-"loop": true,
-"name": &"idle",
-"speed": 5.0
-}]
-
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_q7nht"]
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_pncdh"]
+points = PackedVector3Array(0.166, -0.875, 0.4, 0.166, -0.875, -0.4, -0.166, -0.875, 0.4, -0.166, -0.875, -0.4, -0.4, -0.875, -0.166, 0.4, -0.875, -0.166, -0.4, -0.875, 0.166, 0.4, -0.875, 0.166, 0.166, 0.875, 0.4, 0.166, 0.875, -0.4, -0.166, 0.875, 0.4, -0.166, 0.875, -0.4, -0.4, 0.875, -0.166, 0.4, 0.875, -0.166, -0.4, 0.875, 0.166, 0.4, 0.875, 0.166)
 
 [node name="player" type="CharacterBody3D" groups=["player"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 script = ExtResource("1_y2vro")
 
 [node name="Head" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0.5, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Head"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
 
-[node name="RayCast3D" type="RayCast3D" parent="Head/Camera3D"]
-target_position = Vector3(0, 0, -1000)
-
-[node name="RayCast3D2" type="RayCast3D" parent="Head/Camera3D"]
-target_position = Vector3(0, 0, -2)
-
-[node name="CanvasLayer" type="CanvasLayer" parent="Head"]
-
-[node name="gunBase" type="Control" parent="Head/CanvasLayer"]
-layout_mode = 3
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -20.0
-offset_top = -40.0
-offset_right = 20.0
-grow_horizontal = 2
-grow_vertical = 0
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Head/CanvasLayer/gunBase"]
-texture_filter = 3
-scale = Vector2(2.52, 2.52)
-sprite_frames = SubResource("SpriteFrames_w1dkd")
-animation = &"fire"
-autoplay = "idle"
-
-[node name="BoxContainer" type="BoxContainer" parent="Head/CanvasLayer"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 0
-size_flags_vertical = 0
-alignment = 1
-vertical = true
-
-[node name="Label" type="Label" parent="Head/CanvasLayer/BoxContainer"]
-layout_mode = 2
-text = "health: 100"
-
-[node name="Label2" type="Label" parent="Head/CanvasLayer/BoxContainer"]
-layout_mode = 2
-text = "weapon: unselected"
-
-[node name="Label3" type="Label" parent="Head/CanvasLayer/BoxContainer"]
-layout_mode = 2
-text = "ammo: WIP"
+[node name="TestVisibility" type="RayCast3D" parent="Head/Camera3D"]
+target_position = Vector3(0, 0, -1)
+hit_back_faces = false
+collide_with_areas = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-shape = SubResource("CylinderShape3D_q7nht")
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="CenterContainer" type="CenterContainer" parent="CanvasLayer"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -19.0
-offset_right = 20.0
-offset_bottom = 21.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="TextureRect" type="TextureRect" parent="CanvasLayer/CenterContainer"]
-texture_filter = 1
-layout_mode = 2
-texture = ExtResource("3_k28pa")
+shape = SubResource("ConvexPolygonShape3D_pncdh")

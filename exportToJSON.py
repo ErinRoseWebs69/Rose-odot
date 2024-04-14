@@ -29,69 +29,25 @@ class ExportMapToJSON(bpy.types.Operator):
 
             # Export objects in the "geo" collection
             geo_collection = map_collection.children.get("geo")
+            map_name = geo_collection.children.get("geo").name
             if geo_collection:
-                for room_collection in geo_collection.children:
-                    room_name = room_collection.name
-                    room_data = {}
-                    for room_obj in room_collection.objects:
-                        if room_obj.type == 'MESH':
-                            mesh_data = room_obj.data
-                            bm = bmesh.new()
-                            bm.from_mesh(mesh_data)
-                            bmesh.ops.triangulate(bm, faces=bm.faces)
-                            bm.to_mesh(mesh_data)
-                            bm.free()
-                            
-                            # Create a dictionary to store triangle data for each material index
-                            material_triangles = {}
-
-                            # Iterate over each triangle in the mesh
-                            for poly in mesh_data.polygons:
-                                if len(poly.vertices) == 3:  # Check if the polygon is a triangle
-                                    # Get the material applied to the face
-                                    material_index = min(poly.material_index, len(mesh_data.materials) - 1)
-                                    if material_index >= 0:
-                                        material_name = mesh_data.materials[material_index].name
-                                    else:
-                                        material_name = "DefaultMaterial"
-
-                                    # Get the vertices of the triangle and swap Y and Z coordinates
-                                    vertices = [room_obj.matrix_world @ mesh_data.vertices[i].co for i in poly.vertices]
-                                    vertices = [[v[0], v[1], v[2]] for v in vertices]  # Swap Y and Z coordinates
-                                    
-                                    uv_layer = mesh_data.uv_layers.active.data
-                                    uv_coords = []
-                                    for loop_index in poly.loop_indices:
-                                        uv_coords.append([uv_layer[loop_index].uv[0], uv_layer[loop_index].uv[1]])  # Extract UV coordinates and convert to Vector2 format
-                                    
-                                    # Create JSON data for the triangle
-                                    tri_data = {
-                                        "vertices": vertices,
-                                        "uv_coords": uv_coords, # Add UV coordinates to the JSON data
-                                        "material": material_name
-                                    }
-
-                                # Add triangle data to the dictionary for the material index
-                                if material_index not in material_triangles:
-                                    material_triangles[material_index] = []
-                                material_triangles[material_index].append(tri_data)
-                                
-                            # Add the material triangles to the room data
-                            for material_index, triangles in material_triangles.items():
-                                if room_name not in json_data["geo"]:
-                                    json_data["geo"][room_name] = {}  # Add the room name if it doesn't exist
-                                json_data["geo"][room_name].update({f"{material_index}": triangles})
-                            
-                            #for material_index, faces in material_triangles.items():
-                            #        if material_index not in room_data:
-                            #            room_data[material_index] = {}
-                            #        room_data[material_index].update({f"face{i}": face_data for i, face_data in enumerate(faces)})
-                            #json_data["geo"][room_name] = room_data
+                
+                for obj in geo_collection.objects:
+                    obj_info = [map_name + "/" + obj.name + ".obj"]
+                    if obj_info not in json_data["geo"]:
+                        json_data["geo"] = obj_info
             
             # Export objects in the "entities" collection
             entities_collection = map_collection.children.get("entities")
             if entities_collection:
                 for obj in entities_collection.objects:
+                    
+                    io_modifier = None
+                    for modifiers in obj.modifiers:
+                        if modifier.type == 'NODES' and modifier.node_group is not None:
+                            io_modifier = modifier
+                            break
+                
                     if obj.type == 'LIGHT' and obj.data.type == 'POINT':
                         light_data = obj.data
                         light_color = light_data.color
@@ -120,6 +76,31 @@ class ExportMapToJSON(bpy.types.Operator):
                             "position": [position.x, position.z, -(position.y)],
                             "rotation": [math.degrees(rotation.x), math.degrees(rotation.y), math.degrees(rotation.z)]
                         }
+                    
+                    elif obj.type == 'MESH':
+                        entityType = obj.data.get("entityType")
+                        if entityType == "trigger_multiple":
+                            position = obj.position
+                            
+                            min_corner, max_corner = obj.bound_box[0], obj.bound_box[6]
+                            size_x = max_corner[0] - min_corner[0]
+                            size_y = max_corner[1] - min_corner[1]
+                            size_z = max_corner[2] - min_corner[2]
+                            
+                            size = [size_x, size_y, size_z]
+                            
+                            if io_modifier:
+                                input_data = io_modifier.node_group.inputs
+                                for input_socket in 
+                            
+                            json_data["point_entities"][obj.name] = {
+                                "type": "trigger_multiple",
+                                "name": obj.name,
+                                "position": position,
+                                "size": size,
+                                "outputs": outputs
+                            }
+                            
 
             # Write JSON data to file
             with open(self.filepath, 'w') as file:

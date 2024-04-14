@@ -1,0 +1,7 @@
+{
+	"albedo": "engine/missing.png",
+	"shaderMode": "unshaded",
+	"uv1Triplanar": true,
+	"uv2Triplanar": true,
+	"sampling": "nearest"
+}

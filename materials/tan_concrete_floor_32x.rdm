@@ -1,0 +1,5 @@
+{
+	"shadeMode": "pixel",
+	"albedo": "concrete/tan_concrete_floor_32x.png",
+	"sampling": "nearest"
+}
