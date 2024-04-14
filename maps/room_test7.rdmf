@@ -77,6 +77,12 @@
 			"name": "trigger1",
 			"position": [0,2.5,1.5],
 			"size": [16,5,1],
+			"collisionLayers": [
+				"player",
+				"physics"
+			],
+			"filterType": "none",
+			"filter": "none",
 			"outputs": {
 				"output1": {
 					"input": "onEntered",
@@ -120,7 +126,7 @@
 			"type": "prop_static",
 			"position": [4,1,2],
 			"rotation": [0,45,0],
-			"model": "test/test1.obj",
+			"model": "test/platform.obj",
 			"collisions": true
 		},
 		"move1": {
@@ -192,6 +198,40 @@
 					"parameters": ""
 				}
 			}
+		},
+		"trigger2": {
+			"type": "trigger_multiple_sphere",
+			"name": "trigger_sphere1",
+			"position": [0,1.5,-1.5],
+			"radius": 0.5,
+			"collisionLayers": [
+				"player",
+				"physics"
+			],
+			"filterType": "group",
+			"filter": "player",
+			"outputs": {
+				"output1": {
+					"input": "onEntered",
+					"targetEntity": "Point",
+					"output": "turnOff",
+					"parameters": ""
+				},
+				"output2": {
+					"input": "onExited",
+					"targetEntity": "Point",
+					"output": "turnOn",
+					"parameters": ""
+				}
+			}
+		},
+		"physics1": {
+			"type": "prop_physics",
+			"name": "physics_cube1",
+			"position": [0,2,0],
+			"rotation": [0,0,0],
+			"model": "test/weighted_cube.obj",
+			"canGrab": true
 		}
     }
 }

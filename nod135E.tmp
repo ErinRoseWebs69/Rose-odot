@@ -1,11 +1,10 @@
-[gd_scene load_steps=12 format=3 uid="uid://47qbytsoiag6"]
+[gd_scene load_steps=11 format=3 uid="uid://47qbytsoiag6"]
 
 [ext_resource type="Script" path="res://mapGenRedo1.gd" id="1_dmg23"]
 [ext_resource type="PackedScene" uid="uid://h5gkm3sk8iid" path="res://quake_character.tscn" id="2_cs278"]
 [ext_resource type="Material" uid="uid://bv7pjwwglj1tm" path="res://materials/test_1.tres" id="2_tkwo4"]
 [ext_resource type="Script" path="res://light_test.gd" id="4_7rii6"]
 [ext_resource type="ArrayMesh" uid="uid://donf3hh6ec071" path="res://models/test/test1.obj" id="5_oummy"]
-[ext_resource type="ArrayMesh" uid="uid://dddeo8yfoqd5u" path="res://models/test/weighted_cube.obj" id="6_mf2cx"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_6r5kx"]
 
@@ -17,8 +16,7 @@ size = Vector3(16, 5, 1)
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_ksu1q"]
 data = PackedVector3Array(-1, 1, 1, -1, -1, 1, -1, 1, -1, -1, 1, -1, -1, -1, 1, -1, -1, -1, -1, 1, -1, -1, -1, -1, 1, 1, -1, 1, 1, -1, -1, -1, -1, 1, -1, -1, 1, 1, -1, 1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1, -1, 1, -1, 1, 1, 1, 1, 1, -1, 1, -1, 1, 1, -1, 1, 1, 1, -1, 1, -1, -1, 1, 1, -1, -1, -1, -1, -1, 1, -1, 1, 1, -1, 1, -1, -1, -1, -1, -1, 1, 0.8, 1, -0.8, 0.8, 1, 0.8, 0.8, 2, -0.8, 0.8, 2, -0.8, 0.8, 1, 0.8, 0.8, 2, 0.8, -0.8, 1, -0.8, -0.8, 1, 0.8, -1, 1, -1, -1, 1, -1, -0.8, 1, 0.8, -1, 1, 1, 0.8, 1, -0.8, -0.8, 1, -0.8, 1, 1, -1, 1, 1, -1, -0.8, 1, -0.8, -1, 1, -1, 0.8, 1, 0.8, 0.8, 1, -0.8, 1, 1, 1, 1, 1, 1, 0.8, 1, -0.8, 1, 1, -1, -0.8, 1, 0.8, 0.8, 1, 0.8, -1, 1, 1, -1, 1, 1, 0.8, 1, 0.8, 1, 1, 1, -0.8, 2, -0.8, 0.8, 2, -0.8, -0.8, 2, 0.8, -0.8, 2, 0.8, 0.8, 2, -0.8, 0.8, 2, 0.8, -0.8, 1, 0.8, -0.8, 1, -0.8, -0.8, 2, 0.8, -0.8, 2, 0.8, -0.8, 1, -0.8, -0.8, 2, -0.8, 0.8, 1, 0.8, -0.8, 1, 0.8, 0.8, 2, 0.8, 0.8, 2, 0.8, -0.8, 1, 0.8, -0.8, 2, 0.8, -0.8, 1, -0.8, 0.8, 1, -0.8, -0.8, 2, -0.8, -0.8, 2, -0.8, 0.8, 1, -0.8, 0.8, 2, -0.8)
 
-[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_raf7h"]
-points = PackedVector3Array(0.44998, 0.5, 0.449975, 0.44998, 0.44998, 0.499995, 0.5, 0.44998, 0.449975, 0.44998, 0.5, -0.450079, -0.450078, 0.5, 0.449975, 0.44998, -0.450078, 0.499995, -0.450078, 0.44998, 0.499995, 0.5, 0.44998, -0.450079, 0.5, -0.450078, 0.449975, 0.44998, 0.44998, -0.5, -0.450078, 0.5, -0.450079, -0.5, 0.44998, 0.449975, 0.44998, -0.5, 0.449975, -0.450078, -0.450078, 0.499995, 0.5, -0.450078, -0.450079, 0.44998, -0.450078, -0.5, -0.450078, 0.44998, -0.5, -0.5, 0.44998, -0.450079, -0.5, -0.450078, 0.449975, 0.44998, -0.5, -0.450079, -0.450078, -0.5, 0.449975, -0.450078, -0.450078, -0.5, -0.5, -0.450078, -0.450079, -0.450078, -0.5, -0.450079)
+[sub_resource type="SphereShape3D" id="SphereShape3D_5qy8b"]
 
 [node name="Node3D" type="Node3D" groups=["root"]]
 script = ExtResource("1_dmg23")
@@ -62,13 +60,8 @@ mesh = ExtResource("5_oummy")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="testObject"]
 shape = SubResource("ConcavePolygonShape3D_ksu1q")
 
-[node name="RigidBody3D2" type="RigidBody3D" parent="."]
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D2"]
-mesh = ExtResource("6_mf2cx")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D2"]
-shape = SubResource("ConvexPolygonShape3D_raf7h")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_5qy8b")
 
 [connection signal="body_entered" from="Area3D" to="Area3D" method="_on_body_entered"]
 [connection signal="body_exited" from="Area3D" to="Area3D" method="_on_body_exited"]
