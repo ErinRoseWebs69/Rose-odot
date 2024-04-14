@@ -66,33 +66,33 @@ func _on_body_entered(body):
 	match filterType:
 		"none":
 			if body:
-				output("onEntered")
+				outputCall("onEntered")
 		"name":
 			if body.name == filter:
-				output("onEntered")
+				outputCall("onEntered")
 		"group":
 			if body.is_in_group(filter):
-				output("onEntered")
+				outputCall("onEntered")
 		"class":
 			if body.get_class() == filter:
-				output("onEntered")
+				outputCall("onEntered")
 
 func _on_body_exited(body):
 	match filterType:
 		"none":
 			if body:
-				output("onExited")
+				outputCall("onExited")
 		"name":
 			if body.name == filter:
-				output("onExited")
+				outputCall("onExited")
 		"group":
 			if body.is_in_group(filter):
-				output("onExited")
+				outputCall("onExited")
 		"class":
 			if body.get_class() == filter:
-				output("onExited")
+				outputCall("onExited")
 
-func output(type):
+func outputCall(type):
 	for data in outputData:
 		var input = outputData[data]["input"]
 		if input == type:
