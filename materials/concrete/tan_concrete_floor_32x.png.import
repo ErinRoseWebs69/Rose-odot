@@ -3,20 +3,19 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ciao383udb4jd"
-path.s3tc="res://.godot/imported/tan_concrete_floor_32x.png-c2f5f9b2fe82c7baaf5ffdf2d3cea7a3.s3tc.ctex"
+path="res://.godot/imported/tan_concrete_floor_32x.png-c2f5f9b2fe82c7baaf5ffdf2d3cea7a3.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
-"vram_texture": true
+"vram_texture": false
 }
 
 [deps]
 
 source_file="res://materials/concrete/tan_concrete_floor_32x.png"
-dest_files=["res://.godot/imported/tan_concrete_floor_32x.png-c2f5f9b2fe82c7baaf5ffdf2d3cea7a3.s3tc.ctex"]
+dest_files=["res://.godot/imported/tan_concrete_floor_32x.png-c2f5f9b2fe82c7baaf5ffdf2d3cea7a3.ctex"]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/hdr_compression=1
